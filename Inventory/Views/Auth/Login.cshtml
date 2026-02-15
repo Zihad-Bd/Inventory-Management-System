@@ -23,13 +23,19 @@
             margin: auto;
         }
     </style>
-    <script>
-        var username = '@ViewBag.UserName';
-        @*if (username != "") {
-            alert("Login success, username: " + username);
-            window.location.href = '@Url.Action("About", "Home")';
-        }*@
-    </script>
+    @{
+        string SessionUser = "";
+        if (Session["UserName"] != null) {
+            SessionUser = Session["UserName"].ToString();
+        }
+    }
+<script>
+    var username = '@SessionUser';
+    if (username != "") {
+        alert("Login success, username: " + username);
+        window.location.href = '@Url.Action("About", "Home")';
+    }
+</script>
 </head>
 <body>
     <div id="dvLoginWrapper" class="clsLoginWrapper"> 

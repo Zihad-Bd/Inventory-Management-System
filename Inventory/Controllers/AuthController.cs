@@ -40,10 +40,19 @@ namespace Inventory.Controllers
             if (statusValid)
             {
                 Session["UserName"] = txtUserName;
-                return Redirect(Url.Action("About", "Home"));
+                //return Redirect(Url.Action("About", "Home"));
 
             }
             return View();
+        }
+
+        public ActionResult Logout()
+        {
+            if (Session["UserName"] != null)
+            {
+                Session.Remove("UserName");
+            }
+            return Redirect(Url.Action("Login", "Auth"));
         }
     }
 }
