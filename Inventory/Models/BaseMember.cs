@@ -1,0 +1,77 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+
+namespace Inventory.Models
+{
+    public class BaseMember
+    {
+
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public int Age { get; set; }
+        public string ServiceType {  get; set; }
+        public string Password { get; set; }
+        public string Role { get; set; }
+        public string DashBoardPageURL { get; set; }
+
+        public DataTable ValidateMemberAsDataTable(string UserName, string password)
+        {
+            DataTable dataTable = new DataTable();
+            string connstring = ConfigurationManager.ConnectionStrings["connstring"].ToString();
+            //string connstring2 = ConfigurationManager.AppSettings["connstringAppSetting"].ToString();
+            SqlConnection sqlConnection = new SqlConnection(connstring);
+            sqlConnection.Open();
+            string CommandText = "Select * FROM Members WHERE Name='" + UserName + "' AND Password='" + password + "'";
+            SqlCommand cmd = new SqlCommand(CommandText, sqlConnection);
+            cmd.CommandTimeout = 0;
+            cmd.CommandType = CommandType.Text;
+            cmd.Parameters.Clear();
+            SqlDataAdapter adapter = new SqlDataAdapter(cmd);
+            adapter.Fill(dataTable);
+            cmd.Dispose();
+            sqlConnection.Close();
+            return dataTable;
+        }
+
+        public List<BaseMember> ValidateMemberAsList(string UserName, string password)
+        {
+            List<BaseMember> membersList = new List<BaseMember>();
+            string connstring = ConfigurationManager.ConnectionStrings["connstring"].ToString();
+            //string connstring2 = ConfigurationManager.AppSettings["connstringAppSetting"].ToString();
+            SqlConnection sqlConnection = new SqlConnection(connstring);
+            sqlConnection.Open();
+            string CommandText = "Select * FROM Members";
+            SqlCommand cmd = new SqlCommand(CommandText, sqlConnection);
+            cmd.CommandTimeout = 0;
+            cmd.CommandType = CommandType.Text;
+            cmd.Parameters.Clear();
+            SqlDataReader reader = cmd.ExecuteReader();
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    BaseMember memberObj = new BaseMember();
+                    memberObj.Id = Convert.ToInt32(reader["Id"]);
+                    memberObj.Name = reader["Name"].ToString();
+                    memberObj.Age = Convert.ToInt32(reader["Age"]);
+                    memberObj.ServiceType = reader["ServiceType"].ToString();
+                    memberObj.Password = reader["Password"].ToString();
+                    memberObj.Role = reader["Role"].ToString();
+                    memberObj.DashBoardPageURL = reader["DashBoardPageURL"].ToString();
+                    membersList.Add(memberObj);
+                }
+            }
+             DataTable dataTable2 = new DataTable();
+            cmd.Dispose();
+            sqlConnection.Close();
+            return membersList;
+        }
+    }
+}

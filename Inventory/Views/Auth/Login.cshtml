@@ -1,0 +1,58 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Login</title>
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <script src="~/Scripts/bootstrap.js"></script>
+    <style>
+        .clsLoginWrapper {
+            height: 500px;
+            width: 400px;
+            position: fixed;
+            left: 0px;
+            right: 0px;
+            top: 0px;
+            bottom: 0px;
+            margin: auto;
+        }
+    </style>
+    <script>
+        var username = '@ViewBag.UserName';
+        @*if (username != "") {
+            alert("Login success, username: " + username);
+            window.location.href = '@Url.Action("About", "Home")';
+        }*@
+    </script>
+</head>
+<body>
+    <div id="dvLoginWrapper" class="clsLoginWrapper"> 
+        <div style="position: absolute;left: 0px;right: 0px; top: 0px; bottom: 0px; margin: auto; width: 90%; height: 300px">
+            <form action="@Url.Action("Login", "Auth")" method="post">
+                <div class="card">
+                    <div class="card-header" style="text-align:center">
+                        Login
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="exampleFormControlInput1" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="exampleFormControlInput1" name="txtUserName" placeholder="username">
+                        </div>
+                        <div class="mb-3">
+                            <label for="exampleFormControlInput2" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="exampleFormControlInput2" name="txtPassword" placeholder="password">
+                        </div>
+                        <input type="submit" class="btn btn-primary" value="Submit" />
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
