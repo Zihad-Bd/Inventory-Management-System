@@ -14,7 +14,7 @@
 </style>
 
 <script>
-    //legacy modal
+    //legacy part
     //function openModal() {
     //    document.getElementById("dvOverlay").style.display = "";
     //    document.getElementById("dvModal").style.display = "";
@@ -25,7 +25,15 @@
     //    document.getElementById("dvModal").style.display = "none";
     //}
 
-    //dynamic modal
+    //dynamic part
+    function openModal() {
+        $('#dvModal').dialog({
+            modal: true,
+            title: 'Equipment Entry',
+            width: 400,
+            height: 600
+        });
+    }
 </script>
 
 <div class="row">
