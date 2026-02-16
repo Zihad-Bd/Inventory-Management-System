@@ -58,9 +58,9 @@ namespace Inventory.Models
                 while (reader.Read())
                 {
                     BaseMember memberObj = new BaseMember();
-                    memberObj.Id = Convert.ToInt32(reader["Id"]);
+                    memberObj.Id = Convert.ToInt32(reader["Id"].ToString());
                     memberObj.Name = reader["Name"].ToString();
-                    memberObj.Age = Convert.ToInt32(reader["Age"]);
+                    memberObj.Age = Convert.ToInt32(reader["Age"].ToString());
                     memberObj.ServiceType = reader["ServiceType"].ToString();
                     memberObj.Password = reader["Password"].ToString();
                     memberObj.Role = reader["Role"].ToString();
@@ -68,10 +68,10 @@ namespace Inventory.Models
                     membersList.Add(memberObj);
                 }
             }
-             DataTable dataTable2 = new DataTable();
             cmd.Dispose();
             sqlConnection.Close();
             return membersList;
         }
     }
 }
+

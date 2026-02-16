@@ -1,0 +1,49 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
+using System.Linq;
+using System.Web;
+
+namespace Inventory.Models
+{
+    public class BaseEquipment
+    {
+        public int EquipmentId { get; set; }
+        public string EquipmentName { get; set; }
+        public int Quantity { get; set; }
+        public int Stock {  get; set; } 
+        public DateTime EntryDate { get; set; }
+        public DateTime ReceiveDate { get; set; }
+
+        public List<BaseEquipment> ListEquipment()
+        {
+            List<BaseEquipment> equipmentList = new List<BaseEquipment>();
+            string connString = ConfigurationManager.ConnectionStrings["connstring"].ToString();
+            SqlConnection sqlConnection = new SqlConnection(connString);
+            sqlConnection.Open();
+            string commandText = "SELECT * FROM Equipments";
+            SqlCommand cmd = new SqlCommand(commandText, sqlConnection);
+            cmd.CommandTimeout = 0;
+            cmd.CommandType = CommandType.Text;
+            cmd.Parameters.Clear();
+            SqlDataReader reader = cmd.ExecuteReader();
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    BaseEquipment equipmentObj = new BaseEquipment();
+                    equipmentObj.EquipmentId = Convert.ToInt32(reader["EquipmentId"].ToString());
+                    equipmentObj.EquipmentName = reader["EquipmentName"].ToString();
+                    equipmentObj.Quantity = Convert.ToInt32(reader["Quantity"].ToString());
+                    equipmentObj.Stock = Convert.ToInt32(reader["Stock"].ToString());
+                    equipmentObj.EntryDate = Convert.ToDateTime(reader["EntryDate"].ToString());
+                    equipmentObj.ReceiveDate = Convert.ToDateTime(reader["ReceiveDate"].ToString());
+                    equipmentList.Add(equipmentObj);
+                }
+            }
+            return equipmentList;
+        }
+    }
+}

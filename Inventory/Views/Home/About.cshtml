@@ -7,8 +7,8 @@
 
     <p>Use this area to provide additional information.</p>
     @*<form action="@Url.Action("Sample", "Home")" method="post">
-    </form>*@
-    @using (Html.BeginForm("About", "Home", FormMethod.Post, new {style="font-size: 20px; color: red", @class="form", id="form"}))
+        </form>*@
+    @using (Html.BeginForm("About", "Home", FormMethod.Post, new { style = "font-size: 20px; color: red", @class = "form", id = "form" }))
     {
         <input type="submit" name="btnSubmit" value="Save" />
         <input type="submit" name="btnSubmit" value="Search" />
