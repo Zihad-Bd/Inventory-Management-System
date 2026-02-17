@@ -22,6 +22,22 @@
             bottom: 0px;
             margin: auto;
         }
+
+        .forgotPass {
+            display: block;
+            text-align: center;
+            color: #0866ff;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .forgotPass:hover {
+            text-decoration: underline;
+        }
+
+        .sign-up-btn {
+            width: 60%;
+        }
     </style>
     @{
         string SessionUser = "";
@@ -35,11 +51,15 @@
         alert("Login success, username: " + username);
         window.location.href = '@Url.Action("Index", "DashBoard")';
     }
+    let message = '@TempData["Message"]';
+    if (message != "") {
+        alert(message);
+    }
 </script>
 </head>
 <body>
     <div id="dvLoginWrapper" class="clsLoginWrapper"> 
-        <div style="position: absolute;left: 0px;right: 0px; top: 0px; bottom: 0px; margin: auto; width: 90%; height: 300px">
+        <div style="position: absolute;left: 0px;right: 0px; top: 0px; bottom: 0px; margin: auto; width: 90%; height: 400px">
             <form action="@Url.Action("Login", "Auth")" method="post">
                 <div class="card">
                     <div class="card-header" style="text-align:center">
@@ -54,7 +74,13 @@
                             <label for="exampleFormControlInput2" class="form-label">Password</label>
                             <input type="password" class="form-control" id="exampleFormControlInput2" name="txtPassword" placeholder="password">
                         </div>
-                        <input type="submit" class="btn btn-primary" value="Submit" />
+                        <input type="submit" class="btn btn-primary mb-3" style="width: 100%" value="Log in" />
+                        <a class="forgotPass" href="@Url.Action("ForgotPassword","Auth")">Forgotten password?</a>
+                        <hr style="background: #fff; color: #1c1e21;" />
+                        <div style="text-align: center"> 
+                            <button type="button" class="btn btn-success sign-up-btn">Sign up</button>
+                        </div>
+                       
                     </div>
                 </div>
             </form>

@@ -54,5 +54,42 @@ namespace Inventory.Controllers
             }
             return Redirect(Url.Action("Login", "Auth"));
         }
+        [HttpGet]
+        public ActionResult ForgotPassword()
+        {
+            return View();
+        }
+        [HttpPost]
+        public ActionResult ForgotPassword(string txtUserName, string txtPassword, string txtRetypePassword)
+        {
+            BaseMember member = new BaseMember();
+            bool userExist = member.UserExist(txtUserName);
+            if (userExist)
+            {
+                if (txtPassword == txtRetypePassword)
+                {
+                    // Update password in database
+                    bool result = member.UpdatePassword(txtUserName, txtPassword);
+                    if (result)
+                    {
+                        TempData["Message"] = "Password updated successfully.";
+                        return Redirect(Url.Action("Login", "Auth"));
+                    }
+                    else
+                    {
+                        ViewBag.Message = "Failed to update password. Please try again.";
+                    }
+                }
+                else
+                {
+                    ViewBag.Message = "Passwords do not match.";
+                }
+            }
+            else
+            {
+                ViewBag.Message = "User does not exist.";
+            }
+            return View();
+        }
     }
 }

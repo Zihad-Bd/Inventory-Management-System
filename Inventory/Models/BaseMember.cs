@@ -16,7 +16,7 @@ namespace Inventory.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public int Age { get; set; }
-        public string ServiceType {  get; set; }
+        public string ServiceType { get; set; }
         public string Password { get; set; }
         public string Role { get; set; }
         public string DashBoardPageURL { get; set; }
@@ -71,6 +71,52 @@ namespace Inventory.Models
             cmd.Dispose();
             sqlConnection.Close();
             return membersList;
+        }
+
+        public bool UserExist(string userName)
+        {
+            List<BaseMember> membersList = new List<BaseMember>();
+            bool userExist = false;
+            string connString = ConfigurationManager.ConnectionStrings["connstring"].ToString();
+            SqlConnection sqlConnection = new SqlConnection(connString);
+            sqlConnection.Open();
+            string CommandText = "SELECT * FROM Members WHERE Name = @Name";
+            SqlCommand cmd = new SqlCommand(CommandText, sqlConnection);
+            cmd.CommandTimeout = 0;
+            cmd.CommandType = CommandType.Text;
+            cmd.Parameters.Clear();
+            cmd.Parameters.Add(new SqlParameter("@Name", userName));
+            SqlDataReader reader = cmd.ExecuteReader();
+            if (reader.HasRows)
+            {
+                userExist = true;
+            }
+            cmd.Dispose();
+            sqlConnection.Close();
+            return userExist;
+        }
+
+        public bool UpdatePassword(string userName, string newPassword)
+        {
+            bool statusUpdated = false;
+            string connString = ConfigurationManager.ConnectionStrings["connstring"].ToString();
+            SqlConnection sqlConnection = new SqlConnection(connString);
+            sqlConnection.Open();
+            string CommandText = "UPDATE Members SET Password = @Password WHERE Name = @Name";
+            SqlCommand cmd = new SqlCommand(CommandText, sqlConnection);
+            cmd.CommandTimeout = 0;
+            cmd.CommandType = CommandType.Text;
+            cmd.Parameters.Clear();
+            cmd.Parameters.Add(new SqlParameter("@Password", newPassword));
+            cmd.Parameters.Add(new SqlParameter("@Name", userName));
+            int returnValue = cmd.ExecuteNonQuery();
+            if (returnValue > 0)
+            {
+                statusUpdated = true;
+            }
+            cmd.Dispose();
+            sqlConnection.Close();
+            return statusUpdated;
         }
     }
 }
