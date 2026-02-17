@@ -45,5 +45,26 @@ namespace Inventory.Models
             }
             return equipmentList;
         }
+
+        public int saveEquipment()
+        {
+            string connString = ConfigurationManager.ConnectionStrings["connstring"].ToString();
+            SqlConnection sqlConnection = new SqlConnection(connString);
+            sqlConnection.Open();
+            string commandText = "INSERT INTO Equipments(EquipmentName, Quantity, Stock, EntryDate, ReceiveDate) VALUES(@EquipmentName, @Quantity, @Stock, @EntryDate, @ReceiveDate)";
+            SqlCommand cmd = new SqlCommand(commandText, sqlConnection);
+            cmd.CommandTimeout = 0;
+            cmd.CommandType = CommandType.Text;
+            cmd.Parameters.Clear();
+            cmd.Parameters.Add(new SqlParameter("@EquipmentName", this.EquipmentName));
+            cmd.Parameters.Add(new SqlParameter("@Quantity", this.Quantity));
+            cmd.Parameters.Add(new SqlParameter("@Stock", this.Quantity));
+            cmd.Parameters.Add(new SqlParameter("@EntryDate", this.EntryDate));
+            cmd.Parameters.Add(new SqlParameter("@ReceiveDate", this.ReceiveDate));
+            int returnValue = cmd.ExecuteNonQuery();
+            cmd.Dispose();
+            sqlConnection.Close();
+            return returnValue;
+        }
     }
 }
