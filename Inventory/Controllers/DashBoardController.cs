@@ -23,19 +23,37 @@ namespace Inventory.Controllers
         {
             BaseEquipment baseEquipment = new BaseEquipment();
             int resultStatus = 0;
-            if (btnSubmit == "Save")
+            if (btnSubmit == "Save" || btnSubmit == "Update")
             {
                 baseEquipment.EquipmentName = formCollection["txtEquipmentName"].ToString();
                 baseEquipment.Quantity = Convert.ToInt32(formCollection["quantity"].ToString());
-                baseEquipment.EntryDate = Convert.ToDateTime(formCollection["entryDate"].ToString());
                 baseEquipment.ReceiveDate = Convert.ToDateTime(formCollection["receiveDate"].ToString());
-                resultStatus = baseEquipment.saveEquipment();
             }
-            List<BaseEquipment> equipmentList = baseEquipment.ListEquipment();
-            ViewBag.EquipmentList = equipmentList;
-            if (resultStatus > 0)
+            if (btnSubmit == "Save")
             {
-                TempData["OutMessage"] = "Equipment saved successfully.";
+                baseEquipment.EntryDate = Convert.ToDateTime(formCollection["entryDate"].ToString());
+                resultStatus = baseEquipment.saveEquipment();
+                if (resultStatus > 0)
+                {
+                    TempData["OutMessage"] = "Equipment saved successfully.";
+                }
+                else
+                {
+                    TempData["OutMessage"] = "Equipment can't be saved. Please try again.";
+                }
+            }
+            else if (btnSubmit == "Update")
+            {
+                baseEquipment.EquipmentId = Convert.ToInt32(formCollection["hdnEquipmentId"].ToString());
+                resultStatus = baseEquipment.updateEquipment();
+                if (resultStatus > 0)
+                {
+                    TempData["OutMessage"] = "Equipment updated successfully.";
+                }
+                else
+                {
+                    TempData["OutMessage"] = "Equipment can't be updated. Please try again.";
+                }
             }
             return RedirectToAction("Index");
         }

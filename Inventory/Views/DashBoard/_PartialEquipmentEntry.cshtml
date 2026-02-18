@@ -10,22 +10,23 @@
 @*dynamic modal*@
 <div id="dvModal" style="display: none">
     <form action="@Url.Action("Index", "DashBoard")" method="post">
+        <input type="hidden" id="HdnEquipmentId" name="hdnEquipmentId"/>
         <div class="mb-3">
-            <label for="exampleFormControlInput1" class="form-label">Equipment Name</label>
-            <input type="text" class="form-control" id="exampleFormControlInput1" name="txtEquipmentName" placeholder="Equipment Name">
+            <label for="EquipmentName" class="form-label">Equipment Name</label>
+            <input type="text" class="form-control" id="EquipmentName" name="txtEquipmentName" placeholder="Equipment Name">
         </div>
         <div class="mb-3">
-            <label for="exampleFormControlInput2" class="form-label">Quantity</label>
-            <input type="number" class="form-control" id="exampleFormControlInput2" name="quantity" placeholder="Quantity">
+            <label for="Quantity" class="form-label">Quantity</label>
+            <input type="number" class="form-control" id="Quantity" name="quantity" placeholder="Quantity">
         </div>
         <div class="mb-3">
-            <label for="exampleFormControlInput3" class="form-label">Entry Date</label>
-            <input type="date" class="form-control" id="exampleFormControlInput3" name="entryDate" placeholder="Entry Date">
+            <label for="EntryDate" class="form-label">Entry Date</label>
+            <input type="date" class="form-control" id="EntryDate" name="entryDate" placeholder="Entry Date">
         </div>
         <div class="mb-3">
-            <label for="exampleFormControlInput4" class="form-label">Receive Date</label>
-            <input type="date" class="form-control" id="exampleFormControlInput4" name="receiveDate" placeholder="Receive Date">
+            <label for="ReceiveDate" class="form-label">Receive Date</label>
+            <input type="date" class="form-control" id="ReceiveDate" name="receiveDate" placeholder="Receive Date">
         </div>
-        <input type="submit" class="btn btn-primary" value="Save" name="btnSubmit" />
+        <input id="submit-btn" type="submit" class="btn btn-primary" value="Save" name="btnSubmit" />
     </form>
 </div>

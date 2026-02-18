@@ -66,5 +66,25 @@ namespace Inventory.Models
             sqlConnection.Close();
             return returnValue;
         }
+
+        public int updateEquipment()
+        {
+            string connString = ConfigurationManager.ConnectionStrings["connstring"].ToString();
+            SqlConnection sqlConnection = new SqlConnection(connString);
+            sqlConnection.Open();
+            string commandText = "UPDATE Equipments SET EquipmentName = @EquipmentName, Quantity = @Quantity, ReceiveDate = @ReceiveDate WHERE EquipmentId = @EquipmentId;";
+            SqlCommand cmd = new SqlCommand(commandText, sqlConnection);
+            cmd.CommandTimeout = 0;
+            cmd.CommandType = CommandType.Text;
+            cmd.Parameters.Clear();
+            cmd.Parameters.Add(new SqlParameter("@EquipmentName", this.EquipmentName));
+            cmd.Parameters.Add(new SqlParameter("@Quantity", this.Quantity));
+            cmd.Parameters.Add(new SqlParameter("@ReceiveDate", this.ReceiveDate));
+            cmd.Parameters.Add(new SqlParameter("@EquipmentId", this.EquipmentId));
+            int returnValue = cmd.ExecuteNonQuery();
+            cmd.Dispose(); 
+            sqlConnection.Close();
+            return returnValue;
+        }
     }
 }

@@ -14,6 +14,11 @@
 </style>
 
 <script>
+
+    var message = '@(TempData["OutMessage"] ?? "")';
+    if (message !== "") {
+        alert(message);
+    }
     //legacy part
     //function openModal() {
     //    document.getElementById("dvOverlay").style.display = "";
@@ -34,9 +39,37 @@
             height: 600
         });
     }
-    var message = "@TempData["OutMessage"]";
-    if (message != "") {
-        alert(message);
+    function UpdateItem(EquipmentId, EquipmentName, Quantity, EntryDate, ReceiveDate) {
+        let previousQuantity = Quantity;
+        $('#HdnEquipmentId').val(EquipmentId);
+        $('#EquipmentName').val(EquipmentName);
+        $('#Quantity').val(Quantity);
+        $('#EntryDate').val(EntryDate);
+        $('#ReceiveDate').val(ReceiveDate);
+        $('#submit-btn').val("Update");
+        $('#EntryDate').prop('disabled', true);
+        $('#Quantity').on('blur', function () {
+            var current = parseInt($(this).val());
+            if (current < previousQuantity) {
+                alert("Quantity cannot be less than previous value: " + previousQuantity);
+                $(this).val(previousQuantity);
+            }
+        });
+        $('#dvModal').dialog({
+            modal: true,
+            title: 'Equipment Update',
+            width: 400,
+            height: 600,
+            close: function () {
+                // Reset everything to defaults
+                $('#EquipmentName').val('');
+                $('#Quantity').val('');
+                $('#EntryDate').val('').prop('disabled', false);
+                $('#ReceiveDate').val('');
+                $('#submit-btn').val('Save');
+                previousQuantity = 0;
+            }
+        });
     }
 </script>
 
@@ -66,8 +99,8 @@
                             foreach (BaseEquipment equipment in equipmentList)
                             {
                                 <tr>
-                                    <td class="table-data"><input class="btn btn-primary" type="button" value="Update" onclick="UpdateItem(@equipment.EquipmentId)" /></td>
-                                    <td class="table-data"><input class="btn btn-danger" type="button" value="Delete" onclick="DeleteItem(@equipment.EquipmentId)" /></td>
+                                    <td class="table-data"><input class="btn btn-primary" type="button" value="Update" onclick="UpdateItem(@equipment.EquipmentId, '@equipment.EquipmentName', @equipment.Quantity, '@equipment.EntryDate.ToString("yyyy-MM-dd")', '@equipment.ReceiveDate.ToString("yyyy-MM-dd")')" /></td>
+                                    <td class="table-data"><input class="btn btn-danger" type="button" value="Delete"/></td>
                                     <td class="table-data">@equipment.EquipmentName</td>
                                     <td class="table-data">@equipment.Quantity</td>
                                     <td class="table-data">@equipment.Stock</td>
