@@ -29,7 +29,7 @@ namespace Inventory.Controllers
             //}
             List<BaseMember> memberList = baseMember.ValidateMemberAsList(txtUserName, txtPassword);
             bool statusValid = false;
-            foreach(BaseMember member in memberList)
+            foreach (BaseMember member in memberList)
             {
                 if (member.Name == txtUserName && member.Password == txtPassword)
                 {
@@ -88,6 +88,37 @@ namespace Inventory.Controllers
             else
             {
                 ViewBag.Message = "User does not exist.";
+            }
+            return View();
+        }
+
+        [HttpGet]
+        public ActionResult Register()
+        {
+            return View();
+        }
+        [HttpPost]
+        public ActionResult Register(string txtUserName, string txtPassword)
+        {
+            BaseMember member = new BaseMember();
+            bool userExist = member.UserExist(txtUserName);
+            if (!userExist)
+            {
+                // Save new user in database
+                bool result = member.SaveUser(txtUserName, txtPassword);
+                if (result)
+                {
+                    TempData["Message"] = "Registration successful. Please log in.";
+                    return Redirect(Url.Action("Login", "Auth"));
+                }
+                else
+                {
+                    ViewBag.Message = "Failed to register. Please try again.";
+                }
+            }
+            else
+            {
+                ViewBag.Message = "Username already exists. Please choose a different username.";
             }
             return View();
         }

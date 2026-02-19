@@ -1,6 +1,7 @@
 ﻿
 @{
     Layout = null;
+    string message = ViewBag.Message;
 }
 
 <!DOCTYPE html>
@@ -8,10 +9,10 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
-    <title>Forgot Password</title>
+    <title>Register</title>
     <link href="~/Content/bootstrap.css" rel="stylesheet" />
     <style>
-        .forgot-pass-Wrapper {
+        .register-wrapper {
             height: 500px;
             width: 400px;
             position: fixed;
@@ -24,12 +25,12 @@
     </style>
 </head>
 <body>
-    <div class="forgot-pass-Wrapper">
-        <div style="position: absolute; left: 0px; right: 0px; top: 0px; bottom: 0px; margin: auto; width: 90%; height: fit-content;">
-            <form action="@Url.Action("ForgotPassword", "Auth")" method="post">
+    <div class="register-wrapper">
+        <div style="position: absolute; left: 0px; right: 0px; top: 0px; bottom: 0px; margin: auto; width: 90%; height: fit-content">
+            <form action="@Url.Action("Register", "Auth")" method="post">
                 <div class="card">
                     <div class="card-header" style="text-align:center">
-                        Change Password
+                        Create a new account
                     </div>
                     <div class="card-body">
                         <div class="mb-3">
@@ -37,14 +38,10 @@
                             <input type="text" class="form-control" id="exampleFormControlInput1" name="txtUserName" placeholder="username">
                         </div>
                         <div class="mb-3">
-                            <label for="exampleFormControlInput2" class="form-label">New Password</label>
+                            <label for="exampleFormControlInput2" class="form-label">Password</label>
                             <input type="password" class="form-control" id="exampleFormControlInput2" name="txtPassword" placeholder="password">
                         </div>
-                        <div class="mb-3">
-                            <label for="exampleFormControlInput3" class="form-label">Retype Password</label>
-                            <input type="password" class="form-control" id="exampleFormControlInput3" name="txtRetypePassword" placeholder="retype password">
-                        </div>
-                        <input type="submit" class="btn btn-primary mb-3" style="width: 100%" value="Change" />
+                        <input type="submit" class="btn btn-primary mb-3" style="width: 100%" value="Sign up" />
                     </div>
                 </div>
             </form>
@@ -52,7 +49,7 @@
     </div>
     <script src="~/Scripts/bootstrap.js"></script>
     <script>
-        let message = "@ViewBag.Message";
+        let message = '@message';
         if (message != "") {
             alert(message);
         }

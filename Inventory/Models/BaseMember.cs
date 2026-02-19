@@ -60,11 +60,11 @@ namespace Inventory.Models
                     BaseMember memberObj = new BaseMember();
                     memberObj.Id = Convert.ToInt32(reader["Id"].ToString());
                     memberObj.Name = reader["Name"].ToString();
-                    memberObj.Age = Convert.ToInt32(reader["Age"].ToString());
-                    memberObj.ServiceType = reader["ServiceType"].ToString();
-                    memberObj.Password = reader["Password"].ToString();
-                    memberObj.Role = reader["Role"].ToString();
-                    memberObj.DashBoardPageURL = reader["DashBoardPageURL"].ToString();
+                    memberObj.Age = reader["Age"] != DBNull.Value ? Convert.ToInt32(reader["Age"].ToString()) : 0;
+                    memberObj.ServiceType = reader["ServiceType"] != DBNull.Value ? reader["Age"].ToString() : "";
+                    memberObj.Password = reader["Password"] != DBNull.Value ? reader["Password"].ToString() : "";
+                    memberObj.Role = reader["Role"] != DBNull.Value ? reader["Role"].ToString() : "";
+                    memberObj.DashBoardPageURL = reader["DashBoardPageURL"] != DBNull.Value ? reader["DashBoardPageURL"].ToString() : "";
                     membersList.Add(memberObj);
                 }
             }
@@ -108,6 +108,29 @@ namespace Inventory.Models
             cmd.CommandType = CommandType.Text;
             cmd.Parameters.Clear();
             cmd.Parameters.Add(new SqlParameter("@Password", newPassword));
+            cmd.Parameters.Add(new SqlParameter("@Name", userName));
+            int returnValue = cmd.ExecuteNonQuery();
+            if (returnValue > 0)
+            {
+                statusUpdated = true;
+            }
+            cmd.Dispose();
+            sqlConnection.Close();
+            return statusUpdated;
+        }
+
+        public bool SaveUser(string userName, string password)
+        {
+            bool statusUpdated = false;
+            string connString = ConfigurationManager.ConnectionStrings["connstring"].ToString();
+            SqlConnection sqlConnection = new SqlConnection(connString);
+            sqlConnection.Open();
+            string CommandText = "INSERT INTO Members (Name, Password) VALUES(@Name, @Password)";
+            SqlCommand cmd = new SqlCommand(CommandText, sqlConnection);
+            cmd.CommandTimeout = 0;
+            cmd.CommandType = CommandType.Text;
+            cmd.Parameters.Clear();
+            cmd.Parameters.Add(new SqlParameter("@Password", password));
             cmd.Parameters.Add(new SqlParameter("@Name", userName));
             int returnValue = cmd.ExecuteNonQuery();
             if (returnValue > 0)
