@@ -57,10 +57,13 @@
             }
         }
     });
-    $('#Quantity').on('blur', function() {
-        if(parseInt($(this).val()) > selectedEquipmentStock)
-        {
+    $('#Quantity').on('blur', function () {
+        let quantity = parseInt($(this).val());
+        if (quantity > selectedEquipmentStock) {
             alert('Quantity cannot be greater than stock!');
+            $(this).val('');
+        } else if (quantity < 1) {
+            alert('Quantity must be positive!');
             $(this).val('');
         }
     });
