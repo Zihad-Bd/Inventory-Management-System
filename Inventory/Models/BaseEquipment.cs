@@ -23,10 +23,10 @@ namespace Inventory.Models
             string connString = ConfigurationManager.ConnectionStrings["connstring"].ToString();
             SqlConnection sqlConnection = new SqlConnection(connString);
             sqlConnection.Open();
-            string commandText = "SELECT * FROM Equipments";
+            string commandText = "spInDB_LstEquipment";
             SqlCommand cmd = new SqlCommand(commandText, sqlConnection);
             cmd.CommandTimeout = 0;
-            cmd.CommandType = CommandType.Text;
+            cmd.CommandType = CommandType.StoredProcedure;
             cmd.Parameters.Clear();
             SqlDataReader reader = cmd.ExecuteReader();
             if (reader.HasRows)
@@ -51,14 +51,13 @@ namespace Inventory.Models
             string connString = ConfigurationManager.ConnectionStrings["connstring"].ToString();
             SqlConnection sqlConnection = new SqlConnection(connString);
             sqlConnection.Open();
-            string commandText = "INSERT INTO Equipments(EquipmentName, Quantity, Stock, EntryDate, ReceiveDate) VALUES(@EquipmentName, @Quantity, @Stock, @EntryDate, @ReceiveDate)";
+            string commandText = "INSERT INTO Equipments(EquipmentName, Quantity, EntryDate, ReceiveDate) VALUES(@EquipmentName, @Quantity, @EntryDate, @ReceiveDate)";
             SqlCommand cmd = new SqlCommand(commandText, sqlConnection);
             cmd.CommandTimeout = 0;
             cmd.CommandType = CommandType.Text;
             cmd.Parameters.Clear();
             cmd.Parameters.Add(new SqlParameter("@EquipmentName", this.EquipmentName));
             cmd.Parameters.Add(new SqlParameter("@Quantity", this.Quantity));
-            cmd.Parameters.Add(new SqlParameter("@Stock", this.Quantity));
             cmd.Parameters.Add(new SqlParameter("@EntryDate", this.EntryDate));
             cmd.Parameters.Add(new SqlParameter("@ReceiveDate", this.ReceiveDate));
             int returnValue = cmd.ExecuteNonQuery();
@@ -83,6 +82,71 @@ namespace Inventory.Models
             cmd.Parameters.Add(new SqlParameter("@EquipmentId", this.EquipmentId));
             int returnValue = cmd.ExecuteNonQuery();
             cmd.Dispose(); 
+            sqlConnection.Close();
+            return returnValue;
+        }
+
+        public DataTable ListAssignedEquipment()
+        {
+            DataTable dataTable = new DataTable();
+            string Connstring = ConfigurationManager
+                .ConnectionStrings["Connstring"]
+                .ToString();
+            SqlConnection sqlConnection = new SqlConnection(Connstring);
+            sqlConnection.Open();
+            string CommandText = "spInDB_CustomerEquiAssignment";
+            SqlCommand cmd = new SqlCommand(CommandText, sqlConnection);
+            cmd.CommandTimeout = 0;
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.Clear();
+            SqlDataAdapter dataAdapter = new SqlDataAdapter(cmd);
+            dataAdapter.Fill(dataTable);
+            cmd.Dispose();
+            sqlConnection.Close();
+            return dataTable;
+        }
+
+        public List<(int, string)> getCustomerList()
+        {
+            string connString = ConfigurationManager.ConnectionStrings["connstring"].ToString();
+            SqlConnection sqlConnection = new SqlConnection(connString);
+            sqlConnection.Open();
+            string commandText = "SELECT * FROM Customers";
+            SqlCommand cmd = new SqlCommand(commandText, sqlConnection);
+            cmd.CommandTimeout = 0;
+            cmd.CommandType = CommandType.Text;
+            cmd.Parameters.Clear();
+            List<(int customerId, string customerName)> customerList = new List<(int, string)>();
+            SqlDataReader reader = cmd.ExecuteReader();
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    int customerId = Convert.ToInt32(reader["CustomerId"].ToString());
+                    string customerName = reader["CustomerName"].ToString();
+                    customerList.Add((customerId, customerName));
+                }
+            }
+            cmd.Dispose();
+            sqlConnection.Close();
+            return customerList;
+        }
+
+        public int SaveEquipmentAssignment(int CustomerId, int EquipmentId, int Quantity)
+        {
+            string connString = ConfigurationManager.ConnectionStrings["connstring"].ToString();
+            SqlConnection sqlConnection = new SqlConnection(connString);
+            sqlConnection.Open();
+            string commandText = "spInDB_InsEquiAssignment";
+            SqlCommand cmd = new SqlCommand(commandText, sqlConnection);
+            cmd.CommandTimeout = 0;
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.Clear();
+            cmd.Parameters.Add(new SqlParameter("@CustomerId", CustomerId));
+            cmd.Parameters.Add(new SqlParameter("@EquipmentId", EquipmentId));
+            cmd.Parameters.Add(new SqlParameter("@EquiCount", Quantity));
+            int returnValue = cmd.ExecuteNonQuery();
+            cmd.Dispose();
             sqlConnection.Close();
             return returnValue;
         }

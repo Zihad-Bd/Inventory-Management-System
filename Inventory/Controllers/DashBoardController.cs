@@ -1,6 +1,7 @@
 ﻿using Inventory.Models;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -56,6 +57,34 @@ namespace Inventory.Controllers
                 }
             }
             return RedirectToAction("Index");
+        }
+        [HttpGet]
+        public ActionResult NewEquipmentAssignment()
+        {
+            BaseEquipment baseEquipment = new BaseEquipment();
+            List<(int, string)> customerList = baseEquipment.getCustomerList();
+            ViewBag.CustomerList = customerList;
+            ViewBag.EquipmentList = baseEquipment.ListEquipment();
+            return View(); 
+        }
+        [HttpPost]
+        public ActionResult NewEquipmentAssignment(FormCollection formCollection)
+        {
+            int CustomerId = Convert.ToInt32(formCollection["CustomerName"].ToString());
+            int EquipmentId = Convert.ToInt32(formCollection["EquipmentName"].ToString());
+            int Quantity = Convert.ToInt32(formCollection["Quantity"].ToString());
+            BaseEquipment baseEquipment = new BaseEquipment();
+            int result = baseEquipment.SaveEquipmentAssignment(CustomerId, EquipmentId, Quantity);
+            if (result > 0)
+            {
+                TempData["OutMessage"] = "Equipment assigned successfully";
+                return Redirect(Url.Action("Index", "DashBoard"));
+            }
+            else
+            {
+                TempData["OutMessage"] = "Equipment assignment failed";
+                return View();
+            }
         }
     }
 }

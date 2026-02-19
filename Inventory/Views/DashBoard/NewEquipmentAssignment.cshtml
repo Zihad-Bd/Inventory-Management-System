@@ -1,0 +1,67 @@
+﻿
+@using Inventory.Models
+@using Newtonsoft.Json
+@{
+    ViewBag.Title = "NewEquipmentAssignment";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    List<(int customerId, string customerName)> customerList = ViewBag.CustomerList;
+    List<BaseEquipment> equipmentList = ViewBag.EquipmentList;
+}
+
+<div>
+    <form action="@Url.Action("NewEquipmentAssignment", "DashBoard")" method="post">
+        @*<input type="hidden" id="HdnEquipmentId" name="hdnEquipmentId" />*@
+        <div class="mb-3">
+            <label for="CustomerName" class="form-label">Customer Name</label>
+            <select class="form-control" id="CustomerName" name="CustomerName">
+                <option value="" selected disabled>-- Select Customer --</option>
+                @{
+                    foreach (var customer in customerList)
+                    {
+                        <option value="@customer.customerId">@customer.customerName</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="EquipmentName" class="form-label">Equipment Name</label>
+            <select class="form-control" id="EquipmentName" name="EquipmentName">
+                <option value="" selected disabled>-- Select Equipment --</option>
+                @{
+                    foreach (var equipment in equipmentList)
+                    {
+                        <option value="@equipment.EquipmentId">@equipment.EquipmentName</option>
+                    }
+                }
+            </select>
+            <div id="stock-hint" class="form-text text-primary"></div>
+        </div>
+        <div class="mb-3">
+            <label for="Quantity" class="form-label">Quantity</label>
+            <input type="number" class="form-control" id="Quantity" name="Quantity" placeholder="Quantity">
+        </div>
+        <input id="submit-btn" type="submit" class="btn btn-primary" value="Save" name="btnSubmit" />
+    </form>
+</div>
+
+<script>
+    let customerList = @Html.Raw(JsonConvert.SerializeObject(equipmentList));
+    let selectedEquipmentStock = 0;
+    $('#EquipmentName').on('change', function () {
+        //console.log(customerList);
+        for(let customer of customerList) {
+            if (customer.EquipmentId == $(this).val()) {
+                $('#stock-hint').html('Stock: ' + customer.Stock);
+                selectedEquipmentStock = customer.Stock;
+                $('#Quantity').val('');
+            }
+        }
+    });
+    $('#Quantity').on('blur', function() {
+        if(parseInt($(this).val()) > selectedEquipmentStock)
+        {
+            alert('Quantity cannot be greater than stock!');
+            $(this).val('');
+        }
+    });
+</script>

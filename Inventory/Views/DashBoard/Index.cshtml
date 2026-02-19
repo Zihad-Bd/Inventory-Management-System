@@ -1,11 +1,15 @@
 ﻿
 @using Inventory.Models
+@using System.Data
 @{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <style>
+    .col-name {
+        white-space: nowrap;
+    }
     .table-data {
         vertical-align: middle;
         text-align: center;
@@ -36,7 +40,7 @@
             modal: true,
             title: 'Equipment Entry',
             width: 400,
-            height: 600
+            height: 500
         });
     }
     function UpdateItem(EquipmentId, EquipmentName, Quantity, EntryDate, ReceiveDate) {
@@ -59,7 +63,7 @@
             modal: true,
             title: 'Equipment Update',
             width: 400,
-            height: 600,
+            height: 500,
             close: function () {
                 // Reset everything to defaults
                 $('#EquipmentName').val('');
@@ -84,13 +88,13 @@
                 <table class="table table-hover table-bordered">
                     <thead>
                         <tr class="table-primary">
-                            <th></th>
-                            <th></th>
-                            <th>EquipmentName</th>
+                            <th>Update</th>
+                            <th>Delete</th>
+                            <th>Equipment Name</th>
                             <th>Quantity</th>
                             <th>Stock</th>
-                            <th>EntryDate</th>
-                            <th>ReceiveDate</th>
+                            <th>Entry Date</th>
+                            <th>Receive Date</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -117,9 +121,56 @@
     <div class="col col-sm-6">
         <div style="width: 100%">
             <div style="height: 30px; background: cornsilk; text-align: center; padding: 5px; border-radius: 5px ">
-                Caption 2
+                Assignment History
+                <input class="btn btn-success" type="button" value="New" style="float: right" onclick="window.location.href='@Url.Action("NewEquipmentAssignment", "DashBoard")'"/>
             </div>
-            <div style="max-height: 400px; width: 100%; overflow: auto">List 2</div>
+            <div style="max-height: 400px; width: 100%; overflow: auto">
+                <table class="table table-hover table-bordered">
+                    <thead>
+                        <tr class="table-primary">
+                            <th>Update</th>
+                            <th>Delete</th>
+                            <th class="col-name">Customer Name</th>
+                            <th class="col-name">Customer Mobile</th>
+                            <th class="col-name">Equipment Count</th>
+                            <th class="col-name">Equipment Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            BaseEquipment baseEquipment = new BaseEquipment();
+                            DataTable dt = baseEquipment.ListAssignedEquipment();
+                            var dataList = (from p in dt.AsEnumerable()
+                                            select new
+                                            {
+                                                CustomerId = p.Field<Int32>("CustomerId"),
+                                                CustomerName = p.Field<String>("CustomerName"),
+                                                CustomerMobile = p.Field<String>("CustomerMobile"),
+                                                CustAddress = p.Field<String>("CustAddress"),
+                                                EquiCount = p.Field<Int32>("EquiCount"),
+                                                EquipmentName = p.Field<String>("EquipmentName"),
+                                                AssignmentId = p.Field<Int32>("AssignmentId")
+                                            }).ToList();
+                            foreach (var obj in dataList)
+                            {
+                                string disabledStr = obj.AssignmentId > 0 ? "" : "disabled";
+                                <tr>
+                                    <td class="table-data">                                       
+                                        <input class="btn btn-primary" type="button" value="Update" @disabledStr />                                                                                  
+                                    </td>
+                                    <td class="table-data">                                      
+                                        <input class="btn btn-danger" type="button" value="Delete" @disabledStr />                                        
+                                    </td>
+                                    <td class="table-data">@obj.CustomerName</td>
+                                    <td class="table-data">@obj.CustomerMobile</td>
+                                    <td class="table-data">@obj.EquiCount</td>
+                                    <td class="table-data">@obj.EquipmentName</td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
