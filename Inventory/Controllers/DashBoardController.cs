@@ -86,5 +86,43 @@ namespace Inventory.Controllers
                 return View();
             }
         }
+
+        [HttpGet]
+        public ActionResult UpdateEquipmentAssignment(int id)
+        {
+            BaseEquipment baseEquipment = new BaseEquipment();
+            List<(int, string)> customerList = baseEquipment.getCustomerList();
+            ViewBag.CustomerList = customerList;
+            List<BaseEquipment> equipmentList = baseEquipment.ListEquipment();
+            ViewBag.EquipmentList = equipmentList;
+            DataTable dt = baseEquipment.ListAssignedEquipment();
+            DataRow row = dt.AsEnumerable().FirstOrDefault(r => r.Field<int>("AssignmentId") == id);
+            ViewBag.CustomerId = row.Field<int>("CustomerId");
+            ViewBag.EquipmentId = row.Field<int>("EquipmentId");
+            ViewBag.Quantity = row.Field<int>("EquiCount");
+            ViewBag.AssignmentId = id;
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult UpdateEquipmentAssignment(FormCollection formCollection)
+        {
+            int CustomerId = Convert.ToInt32(formCollection["CustomerName"].ToString());
+            int EquipmentId = Convert.ToInt32(formCollection["EquipmentName"].ToString());
+            int Quantity = Convert.ToInt32(formCollection["Quantity"].ToString());
+            int AssignmentId = Convert.ToInt32(formCollection["hdnAssignmentId"].ToString());
+            BaseEquipment baseEquipment = new BaseEquipment();
+            int result = baseEquipment.UpdateEquipmentAssignment(CustomerId, EquipmentId, Quantity, AssignmentId);
+            if (result > 0)
+            {
+                TempData["OutMessage"] = "Assignment updated successfully";
+                return Redirect(Url.Action("Index", "DashBoard"));
+            }
+            else
+            {
+                TempData["OutMessage"] = "Assignment update failed";
+                return View();
+            }
+        }
     }
 }

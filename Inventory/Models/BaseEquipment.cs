@@ -150,5 +150,25 @@ namespace Inventory.Models
             sqlConnection.Close();
             return returnValue;
         }
+
+        public int UpdateEquipmentAssignment(int CustomerId, int EquipmentId, int Quantity, int AssignmentId)
+        {
+            string connString = ConfigurationManager.ConnectionStrings["connstring"].ToString();
+            SqlConnection sqlConnection = new SqlConnection(connString);
+            sqlConnection.Open();
+            string commandText = "spInDB_InsEquiAssignmentUpdate";
+            SqlCommand cmd = new SqlCommand(commandText, sqlConnection);
+            cmd.CommandTimeout = 0;
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.Clear();
+            cmd.Parameters.Add(new SqlParameter("@CustomerId", CustomerId));
+            cmd.Parameters.Add(new SqlParameter("@EquipmentId", EquipmentId));
+            cmd.Parameters.Add(new SqlParameter("@EquiCount", Quantity));
+            cmd.Parameters.Add(new SqlParameter("@AssignmentId", AssignmentId));
+            int returnValue = cmd.ExecuteNonQuery();
+            cmd.Dispose();
+            sqlConnection.Close();
+            return returnValue;
+        }
     }
 }

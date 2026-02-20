@@ -22,6 +22,7 @@
     var message = '@(TempData["OutMessage"] ?? "")';
     if (message !== "") {
         alert(message);
+        @{TempData["OutMessage"] = ""; }
     }
     //legacy part
     //function openModal() {
@@ -156,7 +157,7 @@
                                 string disabledStr = obj.AssignmentId > 0 ? "" : "disabled";
                                 <tr>
                                     <td class="table-data">                                       
-                                        <input class="btn btn-primary" type="button" value="Update" @disabledStr />                                                                                  
+                                        <input class="btn btn-primary" type="button" value="Update" onclick="window.location.href='@Url.Action("UpdateEquipmentAssignment","DashBoard", new { id = obj.AssignmentId })'" @disabledStr />                                                                                  
                                     </td>
                                     <td class="table-data">                                      
                                         <input class="btn btn-danger" type="button" value="Delete" @disabledStr />                                        

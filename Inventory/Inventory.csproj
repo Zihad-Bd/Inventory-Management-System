@@ -201,6 +201,7 @@
     <Content Include="Views\Auth\ForgotPassword.cshtml" />
     <Content Include="Views\DashBoard\NewEquipmentAssignment.cshtml" />
     <Content Include="Views\Auth\Register.cshtml" />
+    <Content Include="Views\DashBoard\UpdateEquipmentAssignment.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -45,18 +45,18 @@
 </div>
 
 <script>
-    let customerList = @Html.Raw(JsonConvert.SerializeObject(equipmentList));
-    let selectedEquipmentStock = 0;
-    $('#EquipmentName').on('change', function () {
-        //console.log(customerList);
-        for(let customer of customerList) {
-            if (customer.EquipmentId == $(this).val()) {
-                $('#stock-hint').html('Stock: ' + customer.Stock);
-                selectedEquipmentStock = customer.Stock;
-                $('#Quantity').val('');
-            }
-        }
-    });
+    let equipmentList = @Html.Raw(JsonConvert.SerializeObject(equipmentList));
+     let selectedEquipmentStock = 0;
+     $('#EquipmentName').on('change', function () {
+         //console.log(equipmentList);
+         for (let equipment of equipmentList) {
+             if (equipment.EquipmentId == $(this).val()) {
+                 $('#stock-hint').html('Stock: ' + equipment.Stock);
+                 selectedEquipmentStock = equipment.Stock;
+                 $('#Quantity').val('');
+             }
+         }
+     });
     $('#Quantity').on('blur', function () {
         let quantity = parseInt($(this).val());
         if (quantity > selectedEquipmentStock) {

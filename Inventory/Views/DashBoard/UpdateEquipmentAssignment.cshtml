@@ -1,0 +1,100 @@
+﻿
+@using Inventory.Models
+@using Newtonsoft.Json
+@{
+    ViewBag.Title = "UpdateEquipmentAssignment";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    List<(int customerId, string customerName)> customerList = ViewBag.CustomerList;
+    List<BaseEquipment> equipmentList = ViewBag.EquipmentList;
+}
+
+<div>
+    <form action="@Url.Action("UpdateEquipmentAssignment", "DashBoard")" method="post">
+        <input type="hidden" id="HdnAssignmentId" name="hdnAssignmentId"  value="@ViewBag.AssignmentId"/>
+        <div class="mb-3">
+            <label for="CustomerName" class="form-label">Customer Name</label>
+            <select class="form-control" id="CustomerName" name="CustomerName" disabled>
+                <option value="" selected disabled>-- Select Customer --</option>
+                @{
+                    foreach (var customer in customerList)
+                    {
+                        <option value="@customer.customerId" @(ViewBag.CustomerId == customer.customerId ? "selected" : "")>@customer.customerName</option>
+                    }
+                }
+            </select>
+            <select class="form-control" id="CustomerName" name="CustomerName" style="display:none;">
+                <option value="" selected disabled>-- Select Customer --</option>
+                @{
+                    foreach (var customer in customerList)
+                    {
+                        <option value="@customer.customerId" @(ViewBag.CustomerId == customer.customerId ? "selected" : "")>@customer.customerName</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="EquipmentName" class="form-label">Equipment Name</label>
+            <select class="form-control" id="EquipmentName" name="EquipmentName" disabled>
+                <option value="" selected disabled>-- Select Equipment --</option>
+                @{
+                    foreach (var equipment in equipmentList)
+                    {
+                        <option value="@equipment.EquipmentId" @(ViewBag.EquipmentId == equipment.EquipmentId ? "selected" : "")>@equipment.EquipmentName</option>
+                    }
+                }
+            </select>
+            <select class="form-control" id="EquipmentName" name="EquipmentName" style="display:none;">
+                <option value="" selected disabled>-- Select Equipment --</option>
+                @{
+                    foreach (var equipment in equipmentList)
+                    {
+                        <option value="@equipment.EquipmentId" @(ViewBag.EquipmentId == equipment.EquipmentId ? "selected" : "")>@equipment.EquipmentName</option>
+                    }
+                }
+            </select>
+            <div id="stock-hint" class="form-text text-primary"></div>
+        </div>
+        <div class="mb-3">
+            <label for="Quantity" class="form-label">Quantity</label>
+            <input type="number" class="form-control" id="Quantity" name="Quantity" placeholder="Quantity" value="@ViewBag.Quantity">
+        </div>
+        <input id="submit-btn" type="submit" class="btn btn-primary" value="Update" name="btnSubmit" />
+    </form>
+</div>
+
+<script>
+    let equipmentList = @Html.Raw(JsonConvert.SerializeObject(equipmentList));
+    let selectedEquipmentStock = 0;
+    let previousAssignmentCount = parseInt($('#Quantity').val());
+    $(document).ready(function () {
+        for (let equipment of equipmentList) {
+            if (equipment.EquipmentId == parseInt($('#EquipmentName').val())) {
+                let stock = equipment.Stock + previousAssignmentCount;
+                $('#stock-hint').html('Stock: ' + stock);
+                selectedEquipmentStock = stock;
+            }
+        }
+    });
+    //$('#EquipmentName').on('change', function () {
+    //    //console.log(equipmentList);
+    //    for (let equipment of equipmentList) {
+    //        if (equipment.EquipmentId == $(this).val()) {
+    //            let stock = equipment.Stock + previousAssignmentCount;
+    //            $('#stock-hint').html('Stock: ' + stock);
+    //            selectedEquipmentStock = stock;
+    //            $('#Quantity').val('');
+    //        }
+    //    }
+    //});
+    $('#Quantity').on('blur', function () {
+        let quantity = parseInt($(this).val());
+        if (quantity > selectedEquipmentStock) {
+            alert('Quantity cannot be greater than stock!');
+            $(this).val('');
+        } else if (quantity < 1) {
+            alert('Quantity must be positive!');
+            $(this).val('');
+        }
+    });
+</script>
+
