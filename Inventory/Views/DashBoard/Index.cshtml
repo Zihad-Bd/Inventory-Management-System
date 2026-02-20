@@ -129,8 +129,7 @@
 
     var message = '@(TempData["OutMessage"] ?? "")';
     if (message !== "") {
-        alert(message);
-        @{TempData["OutMessage"] = ""; }
+        alert(message); 
     }
     //legacy part
     //function openModal() {
