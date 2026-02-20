@@ -124,5 +124,21 @@ namespace Inventory.Controllers
                 return View();
             }
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteAssignment(int id)
+        {
+            BaseEquipment baseEquipment = new BaseEquipment();
+            int result = baseEquipment.DeleteEquipmentAssignment(id);
+            if (result > 0) {
+                TempData["OutMessage"] = "Assignment deleted successfully";
+            }
+            else
+            {
+                TempData["OutMessage"] = "Assignment deletion failed";
+            }
+            return Redirect(Url.Action("Index", "DashBoard"));
+        }
     }
 }

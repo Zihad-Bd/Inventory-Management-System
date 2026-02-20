@@ -13,7 +13,7 @@ namespace Inventory.Models
         public int EquipmentId { get; set; }
         public string EquipmentName { get; set; }
         public int Quantity { get; set; }
-        public int Stock {  get; set; } 
+        public int Stock { get; set; }
         public DateTime EntryDate { get; set; }
         public DateTime ReceiveDate { get; set; }
 
@@ -81,7 +81,7 @@ namespace Inventory.Models
             cmd.Parameters.Add(new SqlParameter("@ReceiveDate", this.ReceiveDate));
             cmd.Parameters.Add(new SqlParameter("@EquipmentId", this.EquipmentId));
             int returnValue = cmd.ExecuteNonQuery();
-            cmd.Dispose(); 
+            cmd.Dispose();
             sqlConnection.Close();
             return returnValue;
         }
@@ -164,6 +164,23 @@ namespace Inventory.Models
             cmd.Parameters.Add(new SqlParameter("@CustomerId", CustomerId));
             cmd.Parameters.Add(new SqlParameter("@EquipmentId", EquipmentId));
             cmd.Parameters.Add(new SqlParameter("@EquiCount", Quantity));
+            cmd.Parameters.Add(new SqlParameter("@AssignmentId", AssignmentId));
+            int returnValue = cmd.ExecuteNonQuery();
+            cmd.Dispose();
+            sqlConnection.Close();
+            return returnValue;
+        }
+
+        public int DeleteEquipmentAssignment(int AssignmentId)
+        {
+            string connString = ConfigurationManager.ConnectionStrings["connstring"].ToString();
+            SqlConnection sqlConnection = new SqlConnection(connString);
+            sqlConnection.Open();
+            string commandText = "DELETE FROM EquiAssignments WHERE AssignmentId = @AssignmentId;";
+            SqlCommand cmd = new SqlCommand(commandText, sqlConnection);
+            cmd.CommandTimeout = 0;
+            cmd.CommandType = CommandType.Text;
+            cmd.Parameters.Clear();
             cmd.Parameters.Add(new SqlParameter("@AssignmentId", AssignmentId));
             int returnValue = cmd.ExecuteNonQuery();
             cmd.Dispose();

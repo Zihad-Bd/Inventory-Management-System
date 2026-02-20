@@ -17,67 +17,6 @@
     }
 </style>
 
-<script>
-
-    var message = '@(TempData["OutMessage"] ?? "")';
-    if (message !== "") {
-        alert(message);
-        @{TempData["OutMessage"] = ""; }
-    }
-    //legacy part
-    //function openModal() {
-    //    document.getElementById("dvOverlay").style.display = "";
-    //    document.getElementById("dvModal").style.display = "";
-    //}
-
-    //function hideModal() {
-    //    document.getElementById("dvOverlay").style.display = "none";
-    //    document.getElementById("dvModal").style.display = "none";
-    //}
-
-    //dynamic part
-    function openModal() {
-        $('#dvModal').dialog({
-            modal: true,
-            title: 'Equipment Entry',
-            width: 400,
-            height: 500
-        });
-    }
-    function UpdateItem(EquipmentId, EquipmentName, Quantity, EntryDate, ReceiveDate) {
-        let previousQuantity = Quantity;
-        $('#HdnEquipmentId').val(EquipmentId);
-        $('#EquipmentName').val(EquipmentName);
-        $('#Quantity').val(Quantity);
-        $('#EntryDate').val(EntryDate);
-        $('#ReceiveDate').val(ReceiveDate);
-        $('#submit-btn').val("Update");
-        $('#EntryDate').prop('disabled', true);
-        $('#Quantity').on('blur', function () {
-            var current = parseInt($(this).val());
-            if (current < previousQuantity) {
-                alert("Quantity cannot be less than previous value: " + previousQuantity);
-                $(this).val(previousQuantity);
-            }
-        });
-        $('#dvModal').dialog({
-            modal: true,
-            title: 'Equipment Update',
-            width: 400,
-            height: 500,
-            close: function () {
-                // Reset everything to defaults
-                $('#EquipmentName').val('');
-                $('#Quantity').val('');
-                $('#EntryDate').val('').prop('disabled', false);
-                $('#ReceiveDate').val('');
-                $('#submit-btn').val('Save');
-                previousQuantity = 0;
-            }
-        });
-    }
-</script>
-
 <div class="row">
     <div class="col col-sm-6">
         <div style="width: 100%">
@@ -160,7 +99,7 @@
                                         <input class="btn btn-primary" type="button" value="Update" onclick="window.location.href='@Url.Action("UpdateEquipmentAssignment","DashBoard", new { id = obj.AssignmentId })'" @disabledStr />                                                                                  
                                     </td>
                                     <td class="table-data">                                      
-                                        <input class="btn btn-danger" type="button" value="Delete" @disabledStr />                                        
+                                        <input class="btn btn-danger" type="button" value="Delete" @disabledStr  onclick="confirmDelete(@obj.AssignmentId)"/>                                        
                                     </td>
                                     <td class="table-data">@obj.CustomerName</td>
                                     <td class="table-data">@obj.CustomerMobile</td>
@@ -175,5 +114,95 @@
         </div>
     </div>
 </div>
+
+<div id="deleteDialog" title="Confirm Delete" style="display:none;">
+    Are you sure you want to delete this assignment?
+</div>
+
+@using (Html.BeginForm("DeleteAssignment", "Dashboard", FormMethod.Post, new { id = "deleteForm" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("id")
+}
+
+<script>
+
+    var message = '@(TempData["OutMessage"] ?? "")';
+    if (message !== "") {
+        alert(message);
+        @{TempData["OutMessage"] = ""; }
+    }
+    //legacy part
+    //function openModal() {
+    //    document.getElementById("dvOverlay").style.display = "";
+    //    document.getElementById("dvModal").style.display = "";
+    //}
+
+    //function hideModal() {
+    //    document.getElementById("dvOverlay").style.display = "none";
+    //    document.getElementById("dvModal").style.display = "none";
+    //}
+
+    //dynamic part
+    function openModal() {
+        $('#dvModal').dialog({
+            modal: true,
+            title: 'Equipment Entry',
+            width: 400,
+            height: 500
+        });
+    }
+    function UpdateItem(EquipmentId, EquipmentName, Quantity, EntryDate, ReceiveDate) {
+        let previousQuantity = Quantity;
+        $('#HdnEquipmentId').val(EquipmentId);
+        $('#EquipmentName').val(EquipmentName);
+        $('#Quantity').val(Quantity);
+        $('#EntryDate').val(EntryDate);
+        $('#ReceiveDate').val(ReceiveDate);
+        $('#submit-btn').val("Update");
+        $('#EntryDate').prop('disabled', true);
+        $('#Quantity').on('blur', function () {
+            var current = parseInt($(this).val());
+            if (current < previousQuantity) {
+                alert("Quantity cannot be less than previous value: " + previousQuantity);
+                $(this).val(previousQuantity);
+            }
+        });
+        $('#dvModal').dialog({
+            modal: true,
+            title: 'Equipment Update',
+            width: 400,
+            height: 500,
+            close: function () {
+                // Reset everything to defaults
+                $('#EquipmentName').val('');
+                $('#Quantity').val('');
+                $('#EntryDate').val('').prop('disabled', false);
+                $('#ReceiveDate').val('');
+                $('#submit-btn').val('Save');
+                previousQuantity = 0;
+            }
+        });
+    }
+
+     function confirmDelete(id) {
+
+        $("#deleteForm input[name='id']").val(id);
+
+        $("#deleteDialog").dialog({
+            modal: true,
+            resizable: false,
+            height: 300,
+            buttons: {
+                "Yes, Delete": function () {
+                    $("#deleteForm").submit();
+                },
+                "Cancel": function () {
+                    $(this).dialog("close");
+                }
+            }
+        });
+    }
+</script>
 
 @Html.Partial("_PartialEquipmentEntry")
