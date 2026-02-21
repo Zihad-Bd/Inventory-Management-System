@@ -4,12 +4,14 @@
 @{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var AssignedEquipmentCount = ViewBag.AssignedEquipmentCount;
 }
 
 <style>
     .col-name {
         white-space: nowrap;
     }
+
     .table-data {
         vertical-align: middle;
         text-align: center;
@@ -43,15 +45,18 @@
                             foreach (BaseEquipment equipment in equipmentList)
                             {
                                 <tr>
+                                    @{
+                                        string disabledStr = AssignedEquipmentCount[equipment.EquipmentId] > 0 ? "disabled" : "";
+                                    }
                                     <td class="table-data"><input class="btn btn-primary" type="button" value="Update" onclick="UpdateItem(@equipment.EquipmentId, '@equipment.EquipmentName', @equipment.Quantity, '@equipment.EntryDate.ToString("yyyy-MM-dd")', '@equipment.ReceiveDate.ToString("yyyy-MM-dd")')" /></td>
-                                    <td class="table-data"><input class="btn btn-danger" type="button" value="Delete"/></td>
+                                    <td class="table-data"><input class="btn btn-danger" type="button" value="Delete" @disabledStr onclick="confirmDeleteEquipment(@equipment.EquipmentId)"/></td>
                                     <td class="table-data">@equipment.EquipmentName</td>
                                     <td class="table-data">@equipment.Quantity</td>
                                     <td class="table-data">@equipment.Stock</td>
                                     <td class="table-data">@equipment.EntryDate</td>
                                     <td class="table-data">@equipment.ReceiveDate</td>
                                 </tr>
-                            }
+                                        }
                         }
                     </tbody>
                 </table>
@@ -62,7 +67,7 @@
         <div style="width: 100%">
             <div style="height: 30px; background: cornsilk; text-align: center; padding: 5px; border-radius: 5px ">
                 Assignment History
-                <input class="btn btn-success" type="button" value="New" style="float: right" onclick="window.location.href='@Url.Action("NewEquipmentAssignment", "DashBoard")'"/>
+                <input class="btn btn-success" type="button" value="New" style="float: right" onclick="window.location.href='@Url.Action("NewEquipmentAssignment", "DashBoard")'" />
             </div>
             <div style="max-height: 400px; width: 100%; overflow: auto">
                 <table class="table table-hover table-bordered">
@@ -95,11 +100,11 @@
                             {
                                 string disabledStr = obj.AssignmentId > 0 ? "" : "disabled";
                                 <tr>
-                                    <td class="table-data">                                       
-                                        <input class="btn btn-primary" type="button" value="Update" onclick="window.location.href='@Url.Action("UpdateEquipmentAssignment","DashBoard", new { id = obj.AssignmentId })'" @disabledStr />                                                                                  
+                                    <td class="table-data">
+                                        <input class="btn btn-primary" type="button" value="Update" onclick="window.location.href='@Url.Action("UpdateEquipmentAssignment", "DashBoard", new { id = obj.AssignmentId })'" @disabledStr />
                                     </td>
-                                    <td class="table-data">                                      
-                                        <input class="btn btn-danger" type="button" value="Delete" @disabledStr  onclick="confirmDelete(@obj.AssignmentId)"/>                                        
+                                    <td class="table-data">
+                                        <input class="btn btn-danger" type="button" value="Delete" @disabledStr onclick="confirmDelete(@obj.AssignmentId)" />
                                     </td>
                                     <td class="table-data">@obj.CustomerName</td>
                                     <td class="table-data">@obj.CustomerMobile</td>
@@ -119,40 +124,52 @@
     Are you sure you want to delete this assignment?
 </div>
 
+<div id="deleteEquipmentDialog" title="Confirm Delete" style="display:none;">
+    Are you sure you want to delete this equipment?
+</div>
+
 @using (Html.BeginForm("DeleteAssignment", "Dashboard", FormMethod.Post, new { id = "deleteForm" }))
 {
     @Html.AntiForgeryToken()
     @Html.Hidden("id")
 }
 
+@using (Html.BeginForm("DeleteEquipment", "Dashboard", FormMethod.Post, new { id = "deleteForm2" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.Hidden("id")
+}
+
+
 <script>
 
     var message = '@(TempData["OutMessage"] ?? "")';
     if (message !== "") {
-        alert(message); 
+        alert(message);
     }
-    //legacy part
-    //function openModal() {
-    //    document.getElementById("dvOverlay").style.display = "";
-    //    document.getElementById("dvModal").style.display = "";
-    //}
+    @{TempData.Clear(); }
+        //legacy part
+        //function openModal() {
+        //    document.getElementById("dvOverlay").style.display = "";
+        //    document.getElementById("dvModal").style.display = "";
+        //}
 
-    //function hideModal() {
-    //    document.getElementById("dvOverlay").style.display = "none";
-    //    document.getElementById("dvModal").style.display = "none";
-    //}
+        //function hideModal() {
+        //    document.getElementById("dvOverlay").style.display = "none";
+        //    document.getElementById("dvModal").style.display = "none";
+        //}
 
-    //dynamic part
-    function openModal() {
+        //dynamic part
+        function openModal() {
         $('#dvModal').dialog({
             modal: true,
             title: 'Equipment Entry',
             width: 400,
             height: 500
         });
-    }
-    function UpdateItem(EquipmentId, EquipmentName, Quantity, EntryDate, ReceiveDate) {
-        let previousQuantity = Quantity;
+        }
+        function UpdateItem(EquipmentId, EquipmentName, Quantity, EntryDate, ReceiveDate) {
+            let previousQuantity = Quantity;
         $('#HdnEquipmentId').val(EquipmentId);
         $('#EquipmentName').val(EquipmentName);
         $('#Quantity').val(Quantity);
@@ -161,12 +178,12 @@
         $('#submit-btn').val("Update");
         $('#EntryDate').prop('disabled', true);
         $('#Quantity').on('blur', function () {
-            var current = parseInt($(this).val());
-            if (current < previousQuantity) {
-                alert("Quantity cannot be less than previous value: " + previousQuantity);
+                var current = parseInt($(this).val());
+                if (current < previousQuantity) {
+                    alert("Quantity cannot be less than previous value: " + previousQuantity);
                 $(this).val(previousQuantity);
-            }
-        });
+                }
+            });
         $('#dvModal').dialog({
             modal: true,
             title: 'Equipment Update',
@@ -179,12 +196,12 @@
                 $('#EntryDate').val('').prop('disabled', false);
                 $('#ReceiveDate').val('');
                 $('#submit-btn').val('Save');
-                previousQuantity = 0;
-            }
-        });
-    }
+                    previousQuantity = 0;
+                }
+            });
+        }
 
-     function confirmDelete(id) {
+        function confirmDelete(id) {
 
         $("#deleteForm input[name='id']").val(id);
 
@@ -193,15 +210,34 @@
             resizable: false,
             height: 300,
             buttons: {
-                "Yes, Delete": function () {
+                    "Yes, Delete": function () {
                     $("#deleteForm").submit();
-                },
+                    },
                 "Cancel": function () {
                     $(this).dialog("close");
+                    }
                 }
-            }
-        });
-    }
+            });
+        }
+
+        function confirmDeleteEquipment(id) {
+
+        $("#deleteForm2 input[name='id']").val(id);
+
+        $("#deleteEquipmentDialog").dialog({
+            modal: true,
+            resizable: false,
+            height: 300,
+            buttons: {
+                    "Yes, Delete": function () {
+                    $("#deleteForm2").submit();
+                    },
+                "Cancel": function () {
+                    $(this).dialog("close");
+                    }
+                }
+            });
+        }
 </script>
 
 @Html.Partial("_PartialEquipmentEntry")

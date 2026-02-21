@@ -187,5 +187,22 @@ namespace Inventory.Models
             sqlConnection.Close();
             return returnValue;
         }
+
+        public int DeleteEquipment(int EquipmentId)
+        {
+            string connString = ConfigurationManager.ConnectionStrings["connstring"].ToString();
+            SqlConnection sqlConnection = new SqlConnection(connString);
+            sqlConnection.Open();
+            string commandText = "DELETE FROM Equipments WHERE EquipmentId = @EquipmentId;";
+            SqlCommand cmd = new SqlCommand(commandText, sqlConnection);
+            cmd.CommandTimeout = 0;
+            cmd.CommandType = CommandType.Text;
+            cmd.Parameters.Clear();
+            cmd.Parameters.Add(new SqlParameter("@EquipmentId", EquipmentId));
+            int returnValue = cmd.ExecuteNonQuery();
+            cmd.Dispose();
+            sqlConnection.Close();
+            return returnValue;
+        }
     }
 }

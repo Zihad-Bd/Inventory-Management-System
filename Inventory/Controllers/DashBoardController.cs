@@ -16,6 +16,32 @@ namespace Inventory.Controllers
             BaseEquipment baseEquipment = new BaseEquipment();
             List<BaseEquipment> equipmentList = baseEquipment.ListEquipment();
             ViewBag.EquipmentList = equipmentList;
+            DataTable dt = baseEquipment.ListAssignedEquipment();
+            var dataList = (from p in dt.AsEnumerable()
+                            select new
+                            {
+                                CustomerId = p.Field<Int32>("CustomerId"),
+                                CustomerName = p.Field<String>("CustomerName"),
+                                CustomerMobile = p.Field<String>("CustomerMobile"),
+                                CustAddress = p.Field<String>("CustAddress"),
+                                EquiCount = p.Field<Int32>("EquiCount"),
+                                EquipmentName = p.Field<String>("EquipmentName"),
+                                AssignmentId = p.Field<Int32>("AssignmentId"),
+                                EquipmentId = p.Field<Int32>("EquipmentId")
+                            }).ToList();
+            Dictionary<int, int> AssignedEquipmentCount = new Dictionary<int, int>();
+            foreach(var equipment in equipmentList)
+            {
+                AssignedEquipmentCount.Add(equipment.EquipmentId, 0);
+            }
+            foreach(var assignment in dataList)
+            {
+                if (AssignedEquipmentCount.ContainsKey(assignment.EquipmentId))
+                {
+                    AssignedEquipmentCount[assignment.EquipmentId] += assignment.EquiCount;
+                }
+            }
+            ViewBag.AssignedEquipmentCount = AssignedEquipmentCount;
             return View();
         }
 
@@ -137,6 +163,23 @@ namespace Inventory.Controllers
             else
             {
                 TempData["OutMessage"] = "Assignment deletion failed";
+            }
+            return Redirect(Url.Action("Index", "DashBoard"));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteEquipment(int id)
+        {
+            BaseEquipment baseEquipment = new BaseEquipment();
+            int result = baseEquipment.DeleteEquipment(id);
+            if (result > 0)
+            {
+                TempData["OutMessage"] = "Equipment deleted successfully";
+            }
+            else
+            {
+                TempData["OutMessage"] = "Equipment deletion failed";
             }
             return Redirect(Url.Action("Index", "DashBoard"));
         }
